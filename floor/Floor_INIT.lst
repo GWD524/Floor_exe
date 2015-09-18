@@ -1,0 +1,391 @@
+C51 COMPILER V9.00   FLOOR_INIT                                                            09/18/2015 14:40:12 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE FLOOR_INIT
+OBJECT MODULE PLACED IN Floor_INIT.obj
+COMPILER INVOKED BY: F:\程序\APPdate\keil\C51\BIN\C51.EXE Hardwaer\Floor_INIT.c COMPACT BROWSE INCDIR(..\电梯驱动;.\App;
+                    -.\Hardwaer) DEBUG OBJECTEXTEND PRINT(.\Floor_INIT.lst) OBJECT(Floor_INIT.obj)
+
+line level    source
+
+   1          #include "includes.h"
+   2          #include "Floor_INIT.h"
+   3          #include "Motor_INIT.h"
+   4          #include "Door_INIT.h"
+   5          #include "Key_INIT.h"
+   6          #include "Person_Check.h"
+   7          #include "Usart.h"
+   8          
+   9          INT8U Stastu = 0;                        //KEY_IN电梯按键指示，Stastu 电梯所在楼层标志位
+  10          /******************
+  11          ******* 函数名称： Floor_Init（）
+  12          ******* 函数功能： 电梯驱动初始化函数
+  13          ******* 返回值  ： NULL
+  14          ******************/
+  15          void Floor_Init()
+  16          {
+  17   1              Person_Check();
+  18   1              if(UP_Flag == 0){               // person in 0f
+  19   2                      
+  20   2                      switch(Stastu)
+  21   2                      {
+  22   3                              case 0:        // IN 0f 
+  23   3                               send_string_uart("**************8！\r\n");
+  24   3                              if(KEY_IN() == 0)                       //go 0f
+  25   3                              {
+  26   4                                      Stastu = 0;
+  27   4                                      send_string_uart("您当前处于0层，请重新选择！\r\n");
+  28   4                              }else if(KEY_IN() == 1) //go 1f 
+  29   3                              {                         
+  30   4                                      DOOR_Open();            //open the door
+  31   4                                      if(Check_Flag == 1)
+  32   4                                      {
+  33   5                                              DOOR_Close();  // close the door
+  34   5                                              Motor_UP_INIT();
+  35   5                                              send_string_uart("您已到达1层！\r\n");
+  36   5                                              DOOR_Open();   // open the door
+  37   5                                              Stastu = 1;
+  38   5                                      }
+  39   4                              }else if(KEY_IN() == 2) //go 2f
+  40   3                              {                         
+  41   4                                      DOOR_Open();    //open the door
+  42   4                                      if(Check_Flag == 1)
+  43   4                                      {
+  44   5                                              DOOR_Close();   // close the door
+  45   5                                              Motor_UP_INIT();
+  46   5                                              send_string_uart("您已到达2层！\r\n");
+  47   5                                              DOOR_Open();    // open the door
+  48   5                                              Stastu = 3;
+  49   5                                      }
+  50   4                              }
+  51   3                              break;
+  52   3                              case 1:        // IN 1 floor 
+  53   3                              if(KEY_IN() == 0)                       //go 0f
+  54   3                              {                 
+C51 COMPILER V9.00   FLOOR_INIT                                                            09/18/2015 14:40:12 PAGE 2   
+
+  55   4                                      Motor_DOWN_INIT();
+  56   4                                      DOOR_Open();            //open the door
+  57   4                                      if(Check_Flag == 1)
+  58   4                                      {
+  59   5                                              DOOR_Close();  // close the door
+  60   5                                              send_string_uart("您当前处于0层，请重新选择！\r\n");
+  61   5                                              Stastu = 0;
+  62   5                                      }
+  63   4                              }else if(KEY_IN() == 1) //go 1f 
+  64   3                              {                                                       
+  65   4                                      Motor_DOWN_INIT();
+  66   4                                      DOOR_Open();            //open the door
+  67   4                                      if(Check_Flag == 1)
+  68   4                                      {
+  69   5                                              DOOR_Close();  // close the door
+  70   5                                              Motor_UP_INIT();
+  71   5                                              send_string_uart("您已到达1层！\r\n");
+  72   5                                              DOOR_Open();   // open the door
+  73   5                                              Stastu = 1;
+  74   5                                      }
+  75   4                              }else if(KEY_IN() == 2) //go 2f
+  76   3                              {                                                       
+  77   4                                      Motor_DOWN_INIT();
+  78   4                                      DOOR_Open();    //open the door
+  79   4                                      if(Check_Flag == 1)
+  80   4                                      {
+  81   5                                              DOOR_Close();   // close the door
+  82   5                                              Motor_UP_INIT();
+  83   5                                              send_string_uart("您已到达2层！\r\n");
+  84   5                                              DOOR_Open();    // open the door
+  85   5                                              Stastu = 2;
+  86   5                                      }
+  87   4                              }
+  88   3                              break;
+  89   3                              case 2:        // IN 2 floor 
+  90   3                              if(KEY_IN() == 0)                       //go 0f
+  91   3                              {                         
+  92   4                                      Motor_DOWN_INIT();
+  93   4                                      DOOR_Open();            //open the door
+  94   4                                      if(Check_Flag == 1)
+  95   4                                      {
+  96   5                                              DOOR_Close();  // close the door
+  97   5                                              send_string_uart("您当前处于0层，请重新选择！\r\n");
+  98   5                                              Stastu = 0;
+  99   5                                      }
+ 100   4                              }else if(KEY_IN() == 1) //go 1f 
+ 101   3                              {                                                       
+ 102   4                                      Motor_DOWN_INIT();
+ 103   4                                      DOOR_Open();            //open the door
+ 104   4                                      if(Check_Flag == 1)
+ 105   4                                      {
+ 106   5                                              DOOR_Close();  // close the door
+ 107   5                                              Motor_UP_INIT();
+ 108   5                                              send_string_uart("您已到达1层！\r\n");
+ 109   5                                              DOOR_Open();   // open the door
+ 110   5                                              Stastu = 1;
+ 111   5                                      }
+ 112   4                              }else if(KEY_IN() == 2) //go 2f
+ 113   3                              {                                                       
+ 114   4                                      Motor_DOWN_INIT();
+ 115   4                                      DOOR_Open();    //open the door
+ 116   4                                      if(Check_Flag == 1)
+C51 COMPILER V9.00   FLOOR_INIT                                                            09/18/2015 14:40:12 PAGE 3   
+
+ 117   4                                      {
+ 118   5                                              DOOR_Close();   // close the door
+ 119   5                                              Motor_UP_INIT();
+ 120   5                                              send_string_uart("您已到达2层！\r\n");
+ 121   5                                              DOOR_Open();    // open the door
+ 122   5                                              Stastu = 2;
+ 123   5                                      }
+ 124   4                              }
+ 125   3                              break;
+ 126   3                              default:
+ 127   3                              break;
+ 128   3                      }
+ 129   2              }
+ 130   1              if((UP_Flag == 1) || (Down_Flag == 1)){         // person in 1F
+ 131   2                      switch(Stastu)
+ 132   2                      {
+ 133   3                              case 0:        // floor IN 0F 
+ 134   3                              if(KEY_IN() == 0)                       //go 0f
+ 135   3                              {                                               
+ 136   4                                      Motor_UP_INIT();
+ 137   4                                      DOOR_Open();            //open the door
+ 138   4                                      if(Check_Flag == 1)
+ 139   4                                      {
+ 140   5                                              DOOR_Close();  // close the door
+ 141   5                                              Motor_DOWN_INIT();
+ 142   5                                              send_string_uart("您已到达0层！\r\n");
+ 143   5                                              DOOR_Open();   // open the door
+ 144   5                                              Stastu = 1;
+ 145   5                                      }
+ 146   4                              }else if(KEY_IN() == 1) //go 1f 
+ 147   3                              {                         
+ 148   4                                      Motor_UP_INIT();
+ 149   4                                      DOOR_Open();            //open the door
+ 150   4                                      if(Check_Flag == 1)
+ 151   4                                      {
+ 152   5                                              DOOR_Close();  // close the door
+ 153   5                                              send_string_uart("您当前处于1层，请重新选择！\r\n");
+ 154   5                                              Stastu = 1;
+ 155   5                                      }
+ 156   4                              }else if(KEY_IN() == 2) //go 2f
+ 157   3                              {                         
+ 158   4                                      Motor_UP_INIT();
+ 159   4                                      DOOR_Open();    //open the door
+ 160   4                                      if(Check_Flag == 1)
+ 161   4                                      {
+ 162   5                                              DOOR_Close();   // close the door
+ 163   5                                              Motor_UP_INIT();
+ 164   5                                              send_string_uart("您已到达2层！\r\n");
+ 165   5                                              DOOR_Open();    // open the door
+ 166   5                                              Stastu = 3;
+ 167   5                                      }
+ 168   4                              }
+ 169   3                              break;
+ 170   3                              case 1:        // floor IN 1F
+ 171   3                              if(KEY_IN() == 0)                       //go 0f
+ 172   3                              {                         
+ 173   4                                      DOOR_Open();            //open the door
+ 174   4                                      if(Check_Flag == 1)
+ 175   4                                      {
+ 176   5                                              DOOR_Close();  // close the door
+ 177   5                                              Motor_DOWN_INIT();
+ 178   5                                              send_string_uart("您已到达0层！\r\n");
+C51 COMPILER V9.00   FLOOR_INIT                                                            09/18/2015 14:40:12 PAGE 4   
+
+ 179   5                                              Stastu = 0;
+ 180   5                                      }
+ 181   4                              }else if(KEY_IN() == 1) //go 1f 
+ 182   3                              {                                       
+ 183   4                                      DOOR_Open();            //open the door
+ 184   4                                      if(Check_Flag == 1)
+ 185   4                                      {
+ 186   5                                              DOOR_Close();  // close the door
+ 187   5                                              send_string_uart("您当前处于1层，请重新选择！\r\n");
+ 188   5                                              Stastu = 1;
+ 189   5                                      }
+ 190   4                              }else if(KEY_IN() == 2) //go 2f
+ 191   3                              {                       
+ 192   4                                      DOOR_Open();    //open the door
+ 193   4                                      if(Check_Flag == 1)
+ 194   4                                      {
+ 195   5                                              DOOR_Close();   // close the door
+ 196   5                                              Motor_UP_INIT();
+ 197   5                                              send_string_uart("您已到达2层！\r\n");
+ 198   5                                              DOOR_Open();    // open the door
+ 199   5                                              Stastu = 2;
+ 200   5                                      }
+ 201   4                              }
+ 202   3                              break;
+ 203   3                              case 2:        // floor IN 2F 
+ 204   3                              if(KEY_IN() == 0)                       //go 0f
+ 205   3                              {                         
+ 206   4                                      Motor_DOWN_INIT();
+ 207   4                                      DOOR_Open();            //open the door
+ 208   4                                      if(Check_Flag == 1)
+ 209   4                                      {
+ 210   5                                              DOOR_Close();  // close the door
+ 211   5                                              Motor_DOWN_INIT();
+ 212   5                                              send_string_uart("您已到达0层！\r\n");
+ 213   5                                              Stastu = 0;
+ 214   5                                      }
+ 215   4                              }else if(KEY_IN() == 1) //go 1f 
+ 216   3                              {                                                       
+ 217   4                                      Motor_DOWN_INIT();
+ 218   4                                      DOOR_Open();            //open the door
+ 219   4                                      if(Check_Flag == 1)
+ 220   4                                      {
+ 221   5                                              DOOR_Close();  // close the door
+ 222   5                                              send_string_uart("您当前处于1层，请重新选择！\r\n");
+ 223   5                                              Stastu = 1;
+ 224   5                                      }
+ 225   4                              }else if(KEY_IN() == 2) //go 2f
+ 226   3                              {                                                       
+ 227   4                                      Motor_DOWN_INIT();
+ 228   4                                      DOOR_Open();    //open the door
+ 229   4                                      if(Check_Flag == 1)
+ 230   4                                      {
+ 231   5                                              DOOR_Close();   // close the door
+ 232   5                                              Motor_UP_INIT();
+ 233   5                                              send_string_uart("您已到达2层！\r\n");
+ 234   5                                              DOOR_Open();    // open the door
+ 235   5                                              Stastu = 2;
+ 236   5                                      }
+ 237   4                              }
+ 238   3                               break;
+ 239   3                               default:
+ 240   3                               break;
+C51 COMPILER V9.00   FLOOR_INIT                                                            09/18/2015 14:40:12 PAGE 5   
+
+ 241   3                      }
+ 242   2              }
+ 243   1              if(Down_Flag == 2){             // person in 2F
+ 244   2                      switch(Stastu)
+ 245   2                      {
+ 246   3                              case 0:        // floor IN 0F 
+ 247   3                              if(KEY_IN() == 0)                       //go 0f
+ 248   3                              {                                               
+ 249   4                                      Motor_UP_INIT();
+ 250   4                                      DOOR_Open();            //open the door
+ 251   4                                      if(Check_Flag == 1)
+ 252   4                                      {
+ 253   5                                              DOOR_Close();  // close the door
+ 254   5                                              Motor_DOWN_INIT();
+ 255   5                                              send_string_uart("您已到达0层！\r\n");
+ 256   5                                              DOOR_Open();   // open the door
+ 257   5                                              Stastu = 1;
+ 258   5                                      }
+ 259   4                              }else if(KEY_IN() == 1) //go 1f 
+ 260   3                              {                         
+ 261   4                                      Motor_UP_INIT();
+ 262   4                                      DOOR_Open();            //open the door
+ 263   4                                      if(Check_Flag == 1)
+ 264   4                                      {
+ 265   5                                              DOOR_Close();  // close the door
+ 266   5                                              Motor_DOWN_INIT();
+ 267   5                                              send_string_uart("您已到达1层！\r\n");
+ 268   5                                              Stastu = 1;
+ 269   5                                      }
+ 270   4                              }else if(KEY_IN() == 2) //go 2f
+ 271   3                              {                         
+ 272   4                                      Motor_UP_INIT();
+ 273   4                                      DOOR_Open();    //open the door
+ 274   4                                      if(Check_Flag == 1)
+ 275   4                                      {
+ 276   5                                              DOOR_Close();   // close the door
+ 277   5                                              send_string_uart("您当前处于2层，请重新选择！\r\n");
+ 278   5                                              Stastu = 2;
+ 279   5                                      }
+ 280   4                              }
+ 281   3                              break;
+ 282   3                              case 1:        // floor IN 1F
+ 283   3                              if(KEY_IN() == 0)                       //go 0f
+ 284   3                              {                         
+ 285   4                                      Motor_UP_INIT();
+ 286   4                                      DOOR_Open();            //open the door
+ 287   4                                      if(Check_Flag == 1)
+ 288   4                                      {
+ 289   5                                              DOOR_Close();  // close the door
+ 290   5                                              Motor_DOWN_INIT();
+ 291   5                                              send_string_uart("您已到达0层！\r\n");
+ 292   5                                              Stastu = 0;
+ 293   5                                      }
+ 294   4                              }else if(KEY_IN() == 1) //go 1f 
+ 295   3                              {                               
+ 296   4                                      Motor_UP_INIT();
+ 297   4                                      DOOR_Open();            //open the door
+ 298   4                                      if(Check_Flag == 1)
+ 299   4                                      {
+ 300   5                                              DOOR_Close();  // close the door
+ 301   5                                              Motor_DOWN_INIT();
+ 302   5                                              send_string_uart("您已到达1层！\r\n");
+C51 COMPILER V9.00   FLOOR_INIT                                                            09/18/2015 14:40:12 PAGE 6   
+
+ 303   5                                              Stastu = 1;
+ 304   5                                      }
+ 305   4                              }else if(KEY_IN() == 2) //go 2f
+ 306   3                              {                         
+ 307   4                                      Motor_UP_INIT();
+ 308   4                                      DOOR_Open();    //open the door
+ 309   4                                      if(Check_Flag == 1)
+ 310   4                                      {
+ 311   5                                              DOOR_Close();   // close the door
+ 312   5                                              send_string_uart("您当前处于2层，请重新选择！\r\n");
+ 313   5                                              Stastu = 2;
+ 314   5                                      }
+ 315   4                              }
+ 316   3                              break;
+ 317   3                              case 2:        // floor IN 2F 
+ 318   3                              if(KEY_IN() == 0)                       //go 0f
+ 319   3                              {                 
+ 320   4                                      DOOR_Open();            //open the door
+ 321   4                                      if(Check_Flag == 1)
+ 322   4                                      {
+ 323   5                                              DOOR_Close();  // close the door
+ 324   5                                              Motor_DOWN_INIT();
+ 325   5                                              send_string_uart("您已到达0层！\r\n");
+ 326   5                                              Stastu = 0;
+ 327   5                                      }
+ 328   4                              }else if(KEY_IN() == 1) //go 1f 
+ 329   3                              {                               
+ 330   4                                      DOOR_Open();            //open the door
+ 331   4                                      if(Check_Flag == 1)
+ 332   4                                      {
+ 333   5                                              DOOR_Close();  // close the door
+ 334   5                                              Motor_DOWN_INIT();
+ 335   5                                              send_string_uart("您已到达1层！\r\n");
+ 336   5                                              Stastu = 1;
+ 337   5                                      }
+ 338   4                              }else if(KEY_IN() == 2) //go 2f
+ 339   3                              {                                       
+ 340   4                                      DOOR_Open();    //open the door
+ 341   4                                      if(Check_Flag == 1)
+ 342   4                                      {
+ 343   5                                              DOOR_Close();   // close the door
+ 344   5                                              send_string_uart("您当前处于2层，请重新选择！\r\n");
+ 345   5                                              Stastu = 2;
+ 346   5                                      }
+ 347   4                              }
+ 348   3                              break;
+ 349   3                              default:
+ 350   3                              break;                  
+ 351   3                      }
+ 352   2              }
+ 353   1      }
+ 354          
+ 355                          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1033    ----
+   CONSTANT SIZE    =    158    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =      1    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+C51 COMPILER V9.00   FLOOR_INIT                                                            09/18/2015 14:40:12 PAGE 7   
+
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

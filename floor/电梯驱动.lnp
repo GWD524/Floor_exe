@@ -1,0 +1,11 @@
+"STARTUP.obj",
+"main.obj",
+"Usart.obj",
+"Delay_time.obj",
+"Door_INIT.obj",
+"Floor_INIT.obj",
+"Key_INIT.obj",
+"Motor_INIT.obj",
+"Person_Check.obj" 
+TO "µçÌÝÇý¶¯" 
+RAMSIZE(256) 
